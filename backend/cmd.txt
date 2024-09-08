@@ -1,0 +1,38 @@
+In my script package.json file : -
+"dev": "tsc-watch --onSuccess \"node dist/index.js\""   -->> // Means first they watch typescript in compile mode and when the compilation gets Success then run the node-server for index.js file    
+
+
+"build": "tsc -p ."   
+
+This script is responsible for manually triggering the TypeScript compilation process to generate the JavaScript code from your TypeScript source files. The -p . flag specifies the path to the TypeScript project, and in this case, it's the current directory (.).
+
+Running this script (npm run build) will compile your TypeScript code based on the tsconfig.json configuration in your project and generate the corresponding JavaScript files in the dist directory.
+
+-----------------------------------------------------------------------------------------
+
+Here’s a breakdown of the commands in the `scripts` section of your `package.json` file:
+
+1. **`build`: `"tsc"`**
+   - This command runs the TypeScript compiler (`tsc`), which compiles the TypeScript files in your project into JavaScript. By default, it looks for a `tsconfig.json` file to configure the compilation process.
+   
+2. **`start`: `"node dist/index.js"`**
+   - This command uses Node.js to run the compiled JavaScript file `dist/index.js`. Typically, after TypeScript has been compiled (i.e., after running the `build` command), the output goes into the `dist/` directory, and this command starts the server or application from that file.
+   
+3. **`watch`: `"tsc -w"`**
+   - This runs the TypeScript compiler in "watch" mode. It will automatically recompile the TypeScript files whenever it detects a change in any of them. The `-w` flag tells the compiler to stay active and keep watching for changes.
+
+4. **`server`: `"nodemon dist/index.js"`**
+   - This command uses `nodemon`, a tool that monitors for any changes in the code and automatically restarts the Node.js application. It's commonly used during development to refresh the server when code changes, avoiding the need to manually restart it every time.
+
+5. **`dev`: `"concurrently \"npm run watch\" \"npm run server\""`**
+   - This command uses the `concurrently` package to run multiple npm scripts at the same time. It simultaneously runs:
+     - `npm run watch`: This keeps TypeScript in watch mode, recompiling changes as you code.
+     - `npm run server`: This runs `nodemon`, which will automatically restart the server whenever the compiled JavaScript changes.
+
+--------------------------------------------------------------------------------------------------------
+Initialize tsconfig.json
+
+To set up TypeScript, you need to create a tsconfig.json file, which defines the configuration for the TypeScript compiler (tsc).
+
+Run the following command in your project directory:
+tsc --init
