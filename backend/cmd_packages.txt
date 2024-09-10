@@ -1,0 +1,8 @@
+Prisma :- 
+
+- npm i prisma @prisma/client
+- npx prisma init 
+- npx prisma migrate dev --name=users_table
+- npx prisma generate   // generate all the related prisma code and suggested snippet for doing the queries
+
+PostgreSQL DB Service :- console.aiven.io 
