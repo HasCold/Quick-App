@@ -12,22 +12,31 @@ import {
   
 import { Button } from '../ui/button';
 import Image from 'next/image';
+import { signIn } from 'next-auth/react';
   
 
 const LoginModal = () => {
+  
+  const handleLogin = () => {
+    signIn("google", {
+      callbackUrl: "/dashboard",
+      redirect: true
+    })
+  }
+
   return (
     <Dialog>
-  <DialogTrigger asChild>
+  <DialogTrigger asChild color='white'>
     <Button>Getting Started</Button>
   </DialogTrigger>
-  <DialogContent>
+  <DialogContent className="bg-white">
     <DialogHeader>
       <DialogTitle className='text-2xl'>Welcome to QuickChat</DialogTitle>
       <DialogDescription>
         QuickChat makes it efforless to create secure chat links and start conversations in seconds.
       </DialogDescription>
     </DialogHeader>
-    <Button variant="outline">
+    <Button variant="outline" onClick={handleLogin}>
         <Image
         src="/images/google.png"
         className='mr-4'
