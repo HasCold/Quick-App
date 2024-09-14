@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import SessionProvider from "./providers/SessionProvider";
+import { Toaster } from "@/components/ui/sonner"
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body
         className={`${fontSans.variable} antialiased`}
         >
+        <Toaster richColors duration={10000} /> 
         {children}
       </body>
     </html>

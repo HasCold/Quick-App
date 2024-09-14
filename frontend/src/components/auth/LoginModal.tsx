@@ -27,7 +27,7 @@ const LoginModal = () => {
   return (
     <Dialog>
   <DialogTrigger asChild color='white'>
-    <Button>Getting Started</Button>
+    <Button className="bg-black text-white hover:text-black">Getting Started</Button>
   </DialogTrigger>
   <DialogContent className="bg-white">
     <DialogHeader>

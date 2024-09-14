@@ -14,13 +14,39 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(190)
-  email      String   @unique @db.VarChar(190)
-  provider   String   @db.VarChar(100)
+  id         Int         @id @default(autoincrement())
+  name       String      @db.VarChar(190)
+  email      String      @unique @db.VarChar(190)
+  provider   String      @db.VarChar(100)
   image      String?
   oauth_id   String
-  created_at DateTime @default(now())
+  created_at DateTime    @default(now())
+  ChatGroup  ChatGroup[]
 
   @@map("users") // If we don't use map then prisma will made the model name to the User 
+}
+
+model ChatGroup {
+  id         String       @id @default(uuid()) @db.Uuid
+  user       User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    Int
+  title      String       @db.VarChar(200)
+  passcode   String       @db.VarChar(10)
+  created_at DateTime     @default(now())
+  GroupUsers GroupUsers[]
+
+  @@index([created_at]) // Show the data model by descending order with created_at field (e.g., showing the most recent chats first) 
+  @@map("chat_groups")
+}
+
+// Faster Queries: When you query data from the ChatGroup model and sort it by created_at, the index allows the database to retrieve results faster. Without an index, the database would need to scan all the rows to sort or filter them based on created_at.
+
+model GroupUsers {
+  id         Int       @id @default(autoincrement())
+  group      ChatGroup @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  group_id   String    @db.Uuid // group_id is represented as a String, the @db.Uuid tells Prisma to store and handle this field in the database as a UUID, not as a plain string
+  name       String
+  created_at DateTime  @default(now())
+
+  @@map("group_users")
 }
