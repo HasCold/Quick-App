@@ -2,12 +2,12 @@ import { Request, Response } from "express";
 import { JWTPayloadType, LoginPayLoadType } from "../types/index.js";
 import prisma from "../config/db.config.js";
 import { generateToken } from "../config/generateToken.config.js";
-import { apiRespHandler } from "../utils/errorHandler.js";
+import { apiRespHandler, asyncErrorHandler } from "../utils/errorHandler.js";
 
 // In JavaScript, static methods are part of the class itself rather than instances of the class. This means that you can call the method directly on the class without having to create an instance of it.
 
 class AuthController {
-    static async login(req: Request, res: Response){
+    static login = asyncErrorHandler(async (req: Request, res: Response) => {
         try {
             const userData: LoginPayLoadType = req.body;
             let findUser = await prisma.user.findUnique({
@@ -40,7 +40,7 @@ class AuthController {
             console.error(error);
             return apiRespHandler(res, 500, false)
         }
-    }
+    })
 }
 
 export default AuthController;

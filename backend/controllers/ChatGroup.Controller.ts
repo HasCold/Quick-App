@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { apiRespHandler } from "../utils/errorHandler.js";
+import { apiRespHandler, asyncErrorHandler } from "../utils/errorHandler.js";
 import prisma from "../config/db.config.js";
 
 class ChatGroupController{
     // The constructor is a special function in object-oriented programming, but it does not run at the time of compilation. Instead, the constructor runs when an instance of a class is created (i.e., during object instantiation).
 
-    static async getAllRecords(req: Request, res: Response){
+    static getAllRecords = asyncErrorHandler(async (req: Request, res: Response) => {
         try {
             const user = req.user;
 
@@ -27,9 +27,9 @@ class ChatGroupController{
             console.error(error)
             return apiRespHandler(res, 500, false, "Something went wrong. Please try again.")
         }
-    }
+    })
 
-    static async getUniqueRecord(req: Request, res: Response){
+    static getUniqueRecord = asyncErrorHandler(async (req: Request, res: Response) => {
         try {
             const {id} = req.params;
 
@@ -48,9 +48,56 @@ class ChatGroupController{
             console.error(error)
             return apiRespHandler(res, 500, false, "Something went wrong. Please try again.")   
         }
-    }
+    })
 
-    static async store(req: Request, res: Response){
+    static updateChat = asyncErrorHandler(async (req: Request, res: Response) => {
+        try {
+            const body = req.body;
+            const {id} = req.params;
+
+            if(req.method != "PUT") return apiRespHandler(res, 405, false, "Only PUT method is allowed");
+            if(!id || !body) return apiRespHandler(res, 404, false, "Something is missing");
+
+            await prisma.chatGroup.update({
+                where: {
+                    id: id
+                }, 
+                data: {
+                    title: body.title,
+                    passcode: body.passcode
+                }
+            });
+
+            return apiRespHandler(res, 200, true, "Chat Group Updated Successfully")
+
+        } catch (error) {
+            console.error(error)
+            return apiRespHandler(res, 500, false, "Something went wrong. Please try again.")       
+        }
+    });
+
+    static destroy = asyncErrorHandler(async (req: Request, res: Response) => {
+        try {
+            const {id} = req.query;
+
+            if(req.method != "DELETE") return apiRespHandler(res, 405, false, "Only DELETE method is allowed");
+            if(!id) return apiRespHandler(res, 404, false, "Something is missing");
+
+            await prisma.chatGroup.delete({
+                where: {
+                    id: id as string
+                }         
+            });
+
+            return apiRespHandler(res, 200, true, "Deleted Successfully")
+
+        } catch (error) {
+            console.error(error)
+            return apiRespHandler(res, 500, false, "Something went wrong. Please try again.")       
+        }
+    })
+
+    static store = asyncErrorHandler(async (req: Request, res: Response) => {
         try {
             const body = req.body;
             const user = req.user
@@ -73,7 +120,7 @@ class ChatGroupController{
             console.error(error)
             return apiRespHandler(res, 500, false, "Something went wrong. Please try again.")
         }
-    }
+    })
 
 }
 
