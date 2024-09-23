@@ -36,3 +36,12 @@ To set up TypeScript, you need to create a tsconfig.json file, which defines the
 
 Run the following command in your project directory:
 tsc --init
+
+--------------------------------------------------------------------------------------------------------
+
+If you want to run the two servers simultaneously one is by-default running on PORT = 5000 
+
+cmd :- $env:PORT=8000; npm run dev (PowerShell Command)
+
+cmd :- set PORT=8000 npm run dev
+--------------------------------------------------------------------------------------------------------

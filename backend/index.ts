@@ -8,6 +8,9 @@ import authRoute from "./routes/auth.Route.js"
 import chatGroupRoute from "./routes/chat_groups.Route.js"
 import { Server } from "socket.io"
 import { setUpSocket } from "./libs/socket.js"
+import { createAdapter } from "@socket.io/redis-streams-adapter";
+import ioRedis from "./config/redis.config.js"
+import { instrument } from "@socket.io/admin-ui"
 
 dotenv.config();
 
@@ -21,11 +24,18 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
     cors: {
-        origin: "*",
-    }
+        origin: [process.env.CLIENT_APP_URL!, "https://admin.socket.io"],
+        credentials: true,
+    },
+    adapter: createAdapter(ioRedis)
 });
 
-setUpSocket(io)
+instrument(io, {
+    auth: false,
+    mode: "development",
+});
+
+setUpSocket(io);
 
 app.use("/api", authRoute)
 app.use("/api", chatGroupRoute)

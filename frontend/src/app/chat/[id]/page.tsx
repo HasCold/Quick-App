@@ -9,10 +9,9 @@ type ChatParamsID = {
 
 const page: React.FC<ChatParamsID> = ({params}) => {
 
-    console.log("The group ID is :-", params.id)
-
   return (
     <div>
+      <p>Hello This is message</p>
         <ChatBase />
     </div>
   )

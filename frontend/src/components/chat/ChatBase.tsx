@@ -9,7 +9,6 @@ const ChatBase = () => {
 
     let socket = useMemo(() => {
         const ws = getSocket();
-        console.log("get Socket :-", ws)
         return ws.connect();
     }, [])
 
@@ -18,8 +17,8 @@ const ChatBase = () => {
             console.log("Socket Connected :- ", socket.id);
         })
 
-        socket.on("message", (data: any) => {
-            console.log("The socket data is", data)
+        socket.on("server-msg", (data: any) => {
+            console.log("The server socket data is", data)
         })
 
         return () => { // The separate return function is known as the "cleanup function" or "cleanup phase." It is executed when the component unmounts or when the dependencies specified in the dependency array ([] in your case) change. meaning the effect runs only once when the component mounts, and the cleanup function is called when the component unmounts.
@@ -28,7 +27,11 @@ const ChatBase = () => {
     }, []);
 
     const handleMessage = () => {
-        socket.emit("sent-message", {name: "Hasan", id: uuidV4()})
+        if(socket){
+            socket.emit("sent-message", {name: "Hasan"+Date.now(), id: uuidV4()})
+        }else{
+            console.error("Socket not connected successfully !")
+        }
     }
 
   return (
