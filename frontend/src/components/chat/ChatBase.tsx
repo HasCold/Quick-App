@@ -5,10 +5,17 @@ import React, { useEffect, useMemo } from 'react'
 import {v4 as uuidV4} from "uuid"
 import { Button } from '../ui/button';
 
-const ChatBase = () => {
+interface ChatBaseProps {
+    groupId: string;
+}
+
+const ChatBase: React.FC<ChatBaseProps> = ({groupId}) => {
 
     let socket = useMemo(() => {
         const ws = getSocket();
+        ws.auth = {
+            room: groupId
+        };
         return ws.connect();
     }, [])
 
@@ -17,9 +24,9 @@ const ChatBase = () => {
             console.log("Socket Connected :- ", socket.id);
         })
 
-        socket.on("server-msg", (data: any) => {
-            console.log("The server socket data is", data)
-        })
+        socket.on("message", (data) => {
+            console.log("The Room Socket data is", data)
+        });
 
         return () => { // The separate return function is known as the "cleanup function" or "cleanup phase." It is executed when the component unmounts or when the dependencies specified in the dependency array ([] in your case) change. meaning the effect runs only once when the component mounts, and the cleanup function is called when the component unmounts.
             socket.disconnect();

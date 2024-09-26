@@ -1,18 +1,23 @@
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
+import { socketMiddleware } from "../middlewares/Socket.Middleware.js";
+import { CustomSocket } from "../types/index.js";
+import { joinRooms } from "./joinRooms.js";
 
 export function setUpSocket(io: Server){
+    socketMiddleware(io)
 
-io.on("connection", (socket: Socket) => {
+io.on("connection", (socket: CustomSocket) => {
+
+    // join the rooms
+    joinRooms(socket);        
+
     console.log("User connected !", socket.id);
     
-    // io.emit("recieve-message", data);  // This message will send everyone and also including me
-    // socket.broadcast.emit("recieve-message", data);  // This message will send everyone but except me
-    // OR both will work as same io / socket
-
     socket.on("sent-message", (data: any) => {
         console.log("Received message from user:", data);
-        // socket.emit("server-msg", {data, str: "Hello, World"})
         socket.broadcast.emit("server-msg", {data, str: "Hello, World"});
+        
+        io.to(socket.room!).emit("message", data)
     });
 
     socket.on("error", (err) => {
@@ -24,3 +29,9 @@ io.on("connection", (socket: Socket) => {
     });
 });
 }
+
+// Docs :- https://socket.io/docs/v4/rooms/
+
+// io.emit("recieve-message", data); / socket.emit("recieve-message", data);  // This message will send everyone and also including me
+// socket.broadcast.emit("recieve-message", data);  // This message will send everyone but except me
+// OR both will work as same io / socket

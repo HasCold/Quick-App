@@ -12,7 +12,7 @@ const page: React.FC<ChatParamsID> = ({params}) => {
   return (
     <div>
       <p>Hello This is message</p>
-        <ChatBase />
+        <ChatBase groupId={params.id} />
     </div>
   )
 }

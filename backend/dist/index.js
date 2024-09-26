@@ -4,7 +4,7 @@ import http from "http";
 import colors from "colors";
 import dotenv from "dotenv";
 import authRoute from "./routes/auth.Route.js";
-import chatGroupRoute from "./routes/chat_groups.Route.js";
+import chatGroupRoute from "./routes/chatGroups.Route.js";
 import { Server } from "socket.io";
 import { setUpSocket } from "./libs/socket.js";
 import { createAdapter } from "@socket.io/redis-streams-adapter";

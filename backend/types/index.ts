@@ -1,3 +1,5 @@
+import { Socket } from "socket.io";
+
 export interface LoginPayLoadType {
     name: string;
     email: string;
@@ -15,4 +17,9 @@ export type JWTPayloadType = Omit<
 
 export type apiLoginType = JWTPayloadType & {
     token: string;
+}
+
+
+export interface CustomSocket extends Socket {
+    room?: string | undefined;
 }

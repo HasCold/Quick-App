@@ -7,3 +7,21 @@ Install the redis container from :- hub.docker.com
 Redis UI running on PORT :- localhost:8001/redis-stack/browser 
 
 Reference to implement the redis streams in socket.io :- https://socket.io/docs/v4/redis-streams-adapter/ 
+
+------------------------------ Redis CLI Command ---------------------------------------
+
+docker ps :- Through this you can see your docker conatiner is running vid the cmd_line
+
+So we have to interact the redis server which is in the docker-conatiner :-
+
+Execute below command :-
+docker exec -it 07af4e680dff bash  // -->> -it means InterActive
+
+From above command which means we are entering into the docker conatiner and run the bash 
+
+
+root@07af4e680dff:/# redis-cli ping
+PONG
+
+NOTE :-  When you have entered this command so it means you are ready to interact with the redis server. 
+root@07af4e680dff:/# redis-cli
