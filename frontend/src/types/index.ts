@@ -5,3 +5,10 @@ export type ChatGroupType = {
     passcode: string;
     created_at: string;
 }
+
+export type ChatGroupUserType = {
+    id: number;
+    name: string;
+    group_id: string;
+    created_at: string;
+}

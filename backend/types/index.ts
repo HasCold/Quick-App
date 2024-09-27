@@ -23,3 +23,8 @@ export type apiLoginType = JWTPayloadType & {
 export interface CustomSocket extends Socket {
     room?: string | undefined;
 }
+
+export type ChatGroupUserType = {
+    name: string;
+    group_id: string;
+}
