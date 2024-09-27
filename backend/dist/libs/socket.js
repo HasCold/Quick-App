@@ -1,15 +1,19 @@
 import { socketMiddleware } from "../middlewares/Socket.Middleware.js";
 import { joinRooms } from "./joinRooms.js";
 export function setUpSocket(io) {
+    // Middleware inject
     socketMiddleware(io);
     io.on("connection", (socket) => {
         // join the rooms
         joinRooms(socket);
         console.log("User connected !", socket.id);
-        socket.on("sent-message", (data) => {
+        socket.on("message", (data) => {
             console.log("Received message from user:", data);
-            socket.broadcast.emit("server-msg", { data, str: "Hello, World" });
             io.to(socket.room).emit("message", data);
+        });
+        // server-msg is for dummy purpose
+        socket.on("server-msg", (data) => {
+            socket.broadcast.emit("server-msg", { data, str: "Hello, World" });
         });
         socket.on("error", (err) => {
             console.error(`Error on socket ${socket.id}`, err);

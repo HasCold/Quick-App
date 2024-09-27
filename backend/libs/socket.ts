@@ -4,6 +4,7 @@ import { CustomSocket } from "../types/index.js";
 import { joinRooms } from "./joinRooms.js";
 
 export function setUpSocket(io: Server){
+    // Middleware inject
     socketMiddleware(io)
 
 io.on("connection", (socket: CustomSocket) => {
@@ -13,13 +14,17 @@ io.on("connection", (socket: CustomSocket) => {
 
     console.log("User connected !", socket.id);
     
-    socket.on("sent-message", (data: any) => {
+    socket.on("message", (data: any) => {
         console.log("Received message from user:", data);
-        socket.broadcast.emit("server-msg", {data, str: "Hello, World"});
         
         io.to(socket.room!).emit("message", data)
     });
 
+    // server-msg is for dummy purpose
+    socket.on("server-msg", (data: any) => {
+        socket.broadcast.emit("server-msg", {data, str: "Hello, World"});
+    });
+    
     socket.on("error", (err) => {
         console.error(`Error on socket ${socket.id}`, err);
     });

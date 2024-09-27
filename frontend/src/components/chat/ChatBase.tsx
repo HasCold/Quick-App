@@ -35,7 +35,7 @@ const ChatBase: React.FC<ChatBaseProps> = ({groupId}) => {
 
     const handleMessage = () => {
         if(socket){
-            socket.emit("sent-message", {name: "Hasan"+Date.now(), id: uuidV4()})
+            socket.emit("message", {name: "Hasan"+Date.now(), id: uuidV4()})
         }else{
             console.error("Socket not connected successfully !")
         }
