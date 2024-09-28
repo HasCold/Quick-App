@@ -12,3 +12,10 @@ export type ChatGroupUserType = {
     group_id: string;
     created_at: string;
 }
+
+export type LocalDataType = {
+    id?: number;
+    name?: string;
+    group_id?: string;
+    created_at?: string;
+}

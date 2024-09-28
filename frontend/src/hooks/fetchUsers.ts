@@ -5,7 +5,9 @@ const fetchUsers = async (group_id: string) => {
     try {
         const res = await fetch(`${CHAT_GROUP_USER_URL}?group_id=${group_id}`, {
             method: "GET",
-            cache: "no-cache"
+            next: {
+                tags: ["users"]
+            }
         });
 
         if(!res.ok){

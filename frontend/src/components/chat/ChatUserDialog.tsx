@@ -15,6 +15,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { ChatGroupType } from "@/types";
 import { ADD_USER_TO_GROUP } from "@/lib/apiEndPoints";
+import { clearCache } from "@/actions/common";
 
 export default function ChatUserDialog({
   open,
@@ -33,6 +34,7 @@ export default function ChatUserDialog({
 
   useEffect(() => {
     const data = localStorage.getItem(params["id"] as string);
+
     if (data) {
       const jsonData = JSON.parse(data);
       if (jsonData?.name && jsonData?.group_id) {
@@ -45,20 +47,25 @@ export default function ChatUserDialog({
     event.preventDefault();
 
     const localData = localStorage.getItem(params["id"] as string);
-    console.log("L", localData);
+
     if (!localData) {
       try {
-        const {responseObj}: any = await axios.post(ADD_USER_TO_GROUP, {
+        const {data} = await axios.post(ADD_USER_TO_GROUP, {
           name: state.name,
           group_id: params["id"] as string,
         });
 
-        console.log("Chat User dialog", responseObj)
+        if(!data.responseObj.success){
+          throw new Error("Failed to create a user")
+        }
 
         localStorage.setItem(
           params["id"] as string,
-          JSON.stringify(responseObj.data)
+          JSON.stringify(data.responseObj.data)
         );
+
+        clearCache("users");
+        toast.success(data.responseObj.message);
       } catch (error) {
         toast.error("Something went wrong.please try again!");
       }
