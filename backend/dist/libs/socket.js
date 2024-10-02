@@ -1,5 +1,6 @@
 import { socketMiddleware } from "../middlewares/Socket.Middleware.js";
 import { joinRooms } from "./joinRooms.js";
+import prisma from "../config/db.config.js";
 export function setUpSocket(io) {
     // Middleware inject
     socketMiddleware(io);
@@ -7,9 +8,12 @@ export function setUpSocket(io) {
         // join the rooms
         joinRooms(socket);
         console.log("User connected !", socket.id);
-        socket.on("message", (data) => {
+        socket.on("message", async (data) => {
             console.log("Received message from user:", data);
-            io.to(socket.room).emit("message", data);
+            await prisma.chats.create({
+                data: data,
+            });
+            socket.to(socket.room).emit("message", data);
         });
         // server-msg is for dummy purpose
         socket.on("server-msg", (data) => {

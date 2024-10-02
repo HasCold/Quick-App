@@ -10,4 +10,6 @@ export const EDIT_CHAT_GROUP_URL = API_URL + "/update-chat"
 export const DELETE_CHAT_URL = API_URL + "/delete-chat"
 
 export const CHAT_GROUP_USER_URL = API_URL + "/group-chat-fetch";
-export const ADD_USER_TO_GROUP = API_URL + "/add-user-to-group"
+export const ADD_USER_TO_GROUP_URL = API_URL + "/add-user-to-group"
+
+export const FETCH_MESSAGES_URL = API_URL + "/fetch-chats";

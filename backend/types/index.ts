@@ -28,3 +28,11 @@ export type ChatGroupUserType = {
     name: string;
     group_id: string;
 }
+
+export type MessageType = {
+    id: string;
+    group_id: string;
+    name: string;
+    message: string;
+    created_at: string;
+}

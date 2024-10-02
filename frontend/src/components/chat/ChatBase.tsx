@@ -9,11 +9,10 @@ import Chats from './Chats';
 
 interface ChatBaseProps {
     group: ChatGroupType;
-    users: Array<ChatGroupUserType> | [];
-    oldMessages: Array<MessageType> | []; 
+    users: Array<ChatGroupUserType> | []; 
 }
 
-const ChatBase: React.FC<ChatBaseProps> = ({group, users, oldMessages}) => {
+const ChatBase: React.FC<ChatBaseProps> = ({group, users}) => {
 
     const [open, setOpen] = useState(true);
     const [chatUser, setChatUser] = useState<ChatGroupUserType>()
@@ -33,7 +32,7 @@ const ChatBase: React.FC<ChatBaseProps> = ({group, users, oldMessages}) => {
         <div className='w-full md:w-4/5 bg-gradient-to-b from-gray-50 to-white'>
             {open ? <ChatUserDialog open={open} setOpen={setOpen} group={group} /> : <ChatNav chatGroup={group} users={users}  /> }
         
-            <Chats group={group} chatUser={chatUser} oldMessages={oldMessages} />
+            <Chats group={group} chatUser={chatUser} />
         </div>
     </div>
   )

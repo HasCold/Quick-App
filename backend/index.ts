@@ -11,7 +11,8 @@ import { setUpSocket } from "./libs/socket.js"
 import { createAdapter } from "@socket.io/redis-streams-adapter";
 import ioRedis from "./config/redis.config.js"
 import { instrument } from "@socket.io/admin-ui"
-import individualGroupChat from "./routes/chatGroupUser.Route.js"
+import individualGroupChatRoute from "./routes/chatGroupUser.Route.js"
+import fetchChatsRoute from "./routes/fetchChats.Route.js"
 
 dotenv.config();
 
@@ -40,7 +41,8 @@ setUpSocket(io);
 
 app.use("/api", authRoute);
 app.use("/api", chatGroupRoute);
-app.use("/api", individualGroupChat);
+app.use("/api", individualGroupChatRoute);
+app.use("/api", fetchChatsRoute);
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Server is running successfully")

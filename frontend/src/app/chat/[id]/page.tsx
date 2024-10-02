@@ -1,5 +1,3 @@
-"use client";
-
 import ChatBase from '@/components/chat/ChatBase'
 import fetchChatGroup from '@/hooks/chatGroup'
 import fetchUsers from '@/hooks/fetchUsers'
@@ -22,11 +20,11 @@ const page: React.FC<ChatParamsID> = async ({params}) => {
   
   const users: Array<ChatGroupUserType> | [] = await fetchUsers(params.id);
 
-  const chats: Array<MessageType> | [] = await fetchChats(params.id);
+  // const chats: Array<MessageType> | [] = await fetchMessages(params.id, );
 
   return (
     <div>
-      <ChatBase group={group} users={users} oldMessages={chats} />
+      <ChatBase group={group} users={users}  />
     </div>
   )
 }

@@ -14,7 +14,7 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
 import { ChatGroupType } from "@/types";
-import { ADD_USER_TO_GROUP } from "@/lib/apiEndPoints";
+import { ADD_USER_TO_GROUP_URL } from "@/lib/apiEndPoints";
 import { clearCache } from "@/actions/common";
 
 export default function ChatUserDialog({
@@ -50,7 +50,7 @@ export default function ChatUserDialog({
 
     if (!localData) {
       try {
-        const {data} = await axios.post(ADD_USER_TO_GROUP, {
+        const {data} = await axios.post(ADD_USER_TO_GROUP_URL, {
           name: state.name,
           group_id: params["id"] as string,
         });

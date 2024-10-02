@@ -1,0 +1,121 @@
+--------------------------------- Skip and Cursor Methods -------------------------------------
+
+Yes, these two things—`skip` and `cursor`—work together to control how the next batch of chat messages is fetched, ensuring there are no duplicates while loading more messages efficiently. Let's break down how this works:
+
+### 1. **`cursor`**:  
+The `cursor` is a mechanism used to tell the database where to continue fetching messages from. In this case, it uses `lastMessageId` as a marker to start fetching the next batch of messages after the one with this ID.
+
+```js
+cursor: lastMessageId ? { id: lastMessageId } : undefined
+```
+
+- **If `lastMessageId` exists**:  
+  - The query tells the database, "Start fetching messages after the message with this specific `id`."
+- **If `lastMessageId` doesn't exist**:  
+  - The query starts from the beginning (i.e., the first page of messages).
+
+### 2. **`skip`**:
+The `skip` option is used to skip a number of records in the result set. In this case, it's specifically set to `1` to skip the last fetched message.
+
+```js
+skip: lastMessageId ? 1 : 0
+```
+
+- **If `lastMessageId` exists**:  
+  - The query skips the record corresponding to the `lastMessageId`. This is important because, when using a `cursor`, the result set will include the message with the `lastMessageId`. Skipping it prevents duplication of that last message in the new batch of fetched messages.
+- **If `lastMessageId` doesn't exist**:  
+  - No message is skipped (`skip: 0`), and the fetching starts from the beginning.
+
+### How They Work Together:
+When both `cursor` and `skip` are used together:
+- **`cursor`** identifies the message after which the next batch should start, ensuring that the pagination continues from where the last fetch ended.
+- **`skip: 1`** ensures that the `lastMessageId` message itself is not fetched again (avoiding duplicates), as `cursor` includes the message with the `lastMessageId`.
+
+### Example Flow:
+
+1. **First Fetch (No `lastMessageId`)**:
+   - `cursor: undefined`
+   - `skip: 0`
+   - This fetches the first batch of messages starting from the newest message.
+
+2. **Subsequent Fetch (With `lastMessageId`)**:
+   - `cursor: { id: lastMessageId }`
+   - `skip: 1`
+   - The next fetch starts **after** the message with `lastMessageId`, skipping the last message to prevent duplication.
+
+### Why This Works:
+- **Avoiding Duplicates**: Since `cursor` points to the last fetched message and the `skip: 1` ensures the fetch starts **after** it, you won't end up fetching the same message twice.
+- **Efficient Pagination**: Using `cursor` is more efficient than using `offset`-based pagination, especially when dealing with large datasets, as it allows you to pick up exactly where you left off.
+
+### Conclusion:
+Yes, both `skip` and `cursor` are working in sync:
+- `cursor` defines where to start the fetch (after the `lastMessageId`), while
+- `skip: 1` ensures the last fetched message isn't included in the new batch.
+
+Together, they create an efficient and accurate pagination process.
+
+-------------------------------------- Docs ---------------------------------
+
+https://www.prisma.io/docs/orm/prisma-client/queries/pagination#example-sorting-and-offset-pagination
+
+------------------------------------- Frontend Pagination Work --------------------------------------
+
+The `useCallback` function you're referring to in React is used to memoize a function so that it doesn’t get recreated every time the component re-renders. In this case, it’s being used to handle the `IntersectionObserver` logic, but let me explain the key part — the `node` argument.
+
+### How does the `node` attribute work in the callback?
+
+The `node` argument in the callback comes from React’s `ref` system. When you assign `ref={lastMessageRef}` to a DOM element (like a chat message), React passes that DOM element (referred to as `node` in this case) to the `lastMessageRef` function.
+
+Here’s a breakdown of how it works:
+
+1. **`useCallback` and React Refs**:
+   The `useCallback` hook is used to create a memoized version of the `lastMessageRef` function. Whenever the component renders, if the dependencies (`loading` and `hasMore` in this case) haven't changed, the same callback function is used, meaning React won't unnecessarily recreate it.
+
+2. **`node` is a DOM Element**:
+   - When the `ref={lastMessageRef}` attribute is applied to a DOM element, React will automatically pass the reference to that element (the actual DOM node) as an argument to the `lastMessageRef` function. This `node` corresponds to the actual DOM element that was rendered in the browser.
+   - If you place this `ref` on a `div`, `node` would be a reference to that `div` in the DOM.
+   - When the component first mounts, or when the element changes (e.g., after re-rendering), React invokes the `lastMessageRef` callback with the reference to the DOM element (the `node`).
+
+3. **How the `node` is used**:
+   - The `node` is the actual DOM element you want to observe using the `IntersectionObserver`.
+   - When this `node` (i.e., the last chat message) comes into view, the `IntersectionObserver` triggers the callback.
+
+Here’s the breakdown of the flow:
+
+- When React renders a chat message and attaches `ref={lastMessageRef}` to the `div`, React passes the DOM element (the chat message `div`) as the `node` argument to `lastMessageRef`.
+  
+- Inside `lastMessageRef`, this `node` is passed to `observer.current.observe(node)`, which sets up the `IntersectionObserver` to start observing the visibility of the `node`.
+
+```jsx
+const lastMessageRef = useCallback(
+  (node) => {
+    if (loading) return;  // If still loading, don't do anything.
+    if (observer.current) observer.current.disconnect();  // Disconnect any previous observers.
+
+    // Create a new IntersectionObserver instance and handle the intersection event
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        fetchChats();  // Fetch more messages when the last message is visible and there are more to load.
+      }
+    });
+
+    // If the node exists, start observing it
+    if (node) observer.current.observe(node);
+  },
+  [loading, hasMore]
+);
+```
+
+### Why does this work?
+
+- **React Ref System**: React's ref system allows you to directly access the DOM element (the `node`), and React automatically manages passing the reference of the element to the function you define in `useCallback`.
+- **`node` is Passed by React**: The `node` is automatically provided by React when you attach the `ref={lastMessageRef}` to the DOM element (i.e., the last chat message `div`).
+- **Handling Intersection**: Once the `node` is passed to the observer, the `IntersectionObserver` will monitor when that `node` comes into view and trigger `fetchChats()`.
+
+### Conclusion:
+
+- **`node`**: This is the actual DOM element that React is attaching the `ref` to. React automatically passes it to the `lastMessageRef` function.
+- **`useCallback`**: Memoizes the `lastMessageRef` function so it only changes when necessary, avoiding unnecessary re-execution.
+- **Intersection Observer**: Observes the `node` (the last chat message) and triggers more chat fetching when it becomes visible in the viewport.
+
+This combination allows for infinite scrolling using `IntersectionObserver` to efficiently load more chat messages as the user scrolls.
