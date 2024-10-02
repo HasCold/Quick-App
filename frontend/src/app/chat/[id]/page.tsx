@@ -3,7 +3,7 @@
 import ChatBase from '@/components/chat/ChatBase'
 import fetchChatGroup from '@/hooks/chatGroup'
 import fetchUsers from '@/hooks/fetchUsers'
-import { ChatGroupType, ChatGroupUserType } from '@/types'
+import { ChatGroupType, ChatGroupUserType, MessageType } from '@/types'
 import { notFound, useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
@@ -22,9 +22,11 @@ const page: React.FC<ChatParamsID> = async ({params}) => {
   
   const users: Array<ChatGroupUserType> | [] = await fetchUsers(params.id);
 
+  const chats: Array<MessageType> | [] = await fetchChats(params.id);
+
   return (
     <div>
-      <ChatBase group={group} users={users} />
+      <ChatBase group={group} users={users} oldMessages={chats} />
     </div>
   )
 }

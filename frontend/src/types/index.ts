@@ -19,3 +19,11 @@ export type LocalDataType = {
     group_id?: string;
     created_at?: string;
 }
+
+export type MessageType = {
+    id: string;
+    group_id: string;
+    name: string;
+    message: string;
+    created_at: string;
+}
