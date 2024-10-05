@@ -39,7 +39,7 @@ class FetchChatsController{
 
             // The validateUUID function checks if the lastMessageId is a valid UUID.
             const fetchResult = await prisma.chats.findMany({
-                take: 10,  // Limit the number of results
+                take: 20,  // Limit the number of results
                 skip: lastMessageId && validateUUID(lastMessageId as string) ? 1 : 0,  // Skip the last fetched message to avoid duplicates
                 cursor: lastMessageId && validateUUID(lastMessageId as string) ? {id: lastMessageId as string} : undefined, // Start after the last fetched message
                 where: {

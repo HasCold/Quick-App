@@ -30,12 +30,12 @@ export default function Chats({
     setLoading(true)
 
     const newMessages = await fetchMessages(params.id as string, lastMessageId!);
-    if(newMessages.length < 10){
+
+    if(newMessages.length === 0){
       setHasMore(false);
     }
 
     setMessages(prevMessage => [...prevMessage, ...newMessages]);
-    console.log("Messages :- ",messages);
 
     if(newMessages.length > 0){
       setLastMessageId(newMessages[newMessages.length - 1].id);
@@ -45,29 +45,35 @@ export default function Chats({
   }
 
   useEffect(() => {
+
+    const options = {
+      root: null,
+      rootMargin: "70px", // A value of "70px" means the intersection will trigger 70 pixels before the element actually enters the viewport.
+      threshold: 0.5, // 0 means it will trigger as soon as any part of the element appears in the viewport (even 1 pixel).
+    }
+
+    observer.current = new IntersectionObserver((enteries) => {
+      if(loading || !hasMore) return;
+      if(enteries[0].isIntersecting){
+        getMessages();
+      }
+    }, options);
+
+    const lastMessage = document.getElementById("last-message");
+
+    if(lastMessage){
+      observer.current.observe(lastMessage);
+    }
+
+    return () => { // This is the cleanup function in useEffect. It ensures that when the component unmounts or when loading or hasMore changes, the observer stops observing the target element to avoid memory leaks.
+      observer.current?.disconnect();
+    }
+
+  }, [loading, hasMore]);
+
+  useEffect(() => {
     getMessages();
   }, []);
-
-  // useRef hook can directly access the DOM elements
-  let lastMessageRef = useCallback((node: HTMLDivElement) => {
-      if(loading) return; 
-      if(observer.current) observer.current.disconnect();
-
-      observer.current = new IntersectionObserver((entries) => {
-        
-        if(entries[0].isIntersecting && hasMore){
-          console.log("Entries", entries[0]);
-            getMessages()
-        }
-      }, {
-        rootMargin: "100px",  // Trigger 100px before the top of the viewport
-        threshold: 0          // Trigger as soon as the first message is in view
-      });
-
-      if(node) observer.current.observe(node);
-
-      // Observer Logic: By including loading and hasMore in the dependency array, you ensure that the lastMessageRef function is re-created whenever these values change. This way, the logic inside the useCallback (such as if (loading) return;) always works with the current state of the variables.
-  }, [loading, hasMore]);
 
   const scrollToBottom = () => {
     // useRef hook can directly access the DOM elements
@@ -104,7 +110,7 @@ export default function Chats({
       created_at: new Date().toISOString(),
       group_id: group.id,
     };
-    console.log(payload);
+
     socket.emit("message", payload);
     setMessage("");
     setMessages([...messages, payload]);
@@ -118,8 +124,8 @@ export default function Chats({
           {messages?.map((message, index) => (
             <div
               key={index}
-              ref={index === messages.length - 1 ? lastMessageRef : null} // Attach observer to the last message
-              className={`max-w-sm rounded-lg p-2 ${
+              id={index === 0 ? "last-message" : undefined} // Attach observer only to the first (oldest) message
+              className={`max-w-sm rounded-lg p-2 break-words overflow-hidden ${
                 message.name === chatUser?.name
                   ? "bg-gradient-to-r from-blue-400 to-blue-600  text-white self-end"
                   : "bg-gradient-to-r from-gray-200 to-gray-300 text-black self-start"

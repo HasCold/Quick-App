@@ -37,7 +37,7 @@ FetchChatsController.paginatedFetchChats = asyncErrorHandler(async (req, res) =>
             return apiRespHandler(res, 404, false, "ID not found");
         // The validateUUID function checks if the lastMessageId is a valid UUID.
         const fetchResult = await prisma.chats.findMany({
-            take: 10, // Limit the number of results
+            take: 20, // Limit the number of results
             skip: lastMessageId && validateUUID(lastMessageId) ? 1 : 0, // Skip the last fetched message to avoid duplicates
             cursor: lastMessageId && validateUUID(lastMessageId) ? { id: lastMessageId } : undefined, // Start after the last fetched message
             where: {
