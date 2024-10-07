@@ -3,6 +3,7 @@ import { socketMiddleware } from "../middlewares/Socket.Middleware.js";
 import { CustomSocket, MessageType } from "../types/index.js";
 import { joinRooms } from "./joinRooms.js";
 import prisma from "../config/db.config.js";
+import { produceMessage } from "./helper.js";
 
 export function setUpSocket(io: Server){
     // Middleware inject
@@ -16,11 +17,8 @@ io.on("connection", (socket: CustomSocket) => {
     console.log("User connected !", socket.id);
     
     socket.on("message", async (data: MessageType) => {
-        console.log("Received message from user:", data);
-        await prisma.chats.create({
-            data: data,
-        });
-
+        await produceMessage(process.env.KAFKA_TOPIC!, data);
+        
         socket.to(socket.room!).emit("message", data)
     });
 

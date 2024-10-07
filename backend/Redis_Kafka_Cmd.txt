@@ -10,6 +10,8 @@ Reference to implement the redis streams in socket.io :- https://socket.io/docs/
 
 ------------------------------ Redis CLI Command ---------------------------------------
 
+Aiven.io := ha03330224926@gmail.com
+
 docker ps :- Through this you can see your docker conatiner is running vid the cmd_line
 
 So we have to interact the redis server which is in the docker-conatiner :-
@@ -25,3 +27,7 @@ PONG
 
 NOTE :-  When you have entered this command so it means you are ready to interact with the redis server. 
 root@07af4e680dff:/# redis-cli
+
+------------------------ Kafka Service ----------------------------
+
+Aiven.io :- mh1299aliminer@gmail.com

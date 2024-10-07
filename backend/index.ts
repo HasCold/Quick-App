@@ -13,6 +13,8 @@ import ioRedis from "./config/redis.config.js"
 import { instrument } from "@socket.io/admin-ui"
 import individualGroupChatRoute from "./routes/chatGroupUser.Route.js"
 import fetchChatsRoute from "./routes/fetchChats.Route.js"
+import { connectKafkaProducer } from "./config/kafka.config.js"
+import { consumeMessages } from "./libs/helper.js"
 
 dotenv.config();
 
@@ -46,6 +48,13 @@ app.use("/api", fetchChatsRoute);
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Server is running successfully")
+});
+
+connectKafkaProducer().catch(err => {
+    console.log("Something went wrong", colors.bgRed.white(err.message));
+});
+consumeMessages(process.env.KAFKA_TOPIC!).catch(err => {
+    console.log("The consumer error is", colors.bgRed.italic(err.message));
 });
 
 const PORT = process.env.PORT || 5000;
