@@ -50,3 +50,6 @@ server.listen(PORT, () => {
     console.log(colors.bgYellow.bold(`Server is running on PORT : ${PORT}`));
 });
 export { io };
+// Check The Application on mobile device :- 
+// ipconfig -->> Your desktop ip address 
+// Search it on mobile device and easily access that application :- <your-ip-address>:3000
